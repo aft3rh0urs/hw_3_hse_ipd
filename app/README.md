@@ -86,3 +86,49 @@ docker compose up -d
  ✔ Container app-app-1 Started                          
 curl -fsS http://127.0.0.1:8888/
 {"greeting": "Wazzup", "count": 4, "hostname": "f27cfeb1b836", "storage": "sqlite"}
+
+Список команд и их результатов на 8 баллов:
+docker build -t cur_app
+docker compose up -d
+[+] up 14/14
+ ✔ Image redis:7.4-alpine Pulled                                                                                                       6.5s
+ ✔ Network app_default    Created                                                                                                      0.1s
+ ✔ Volume app_redis_data  Created                                                                                                      0.0s
+ ✔ Container app-redis-1  Healthy                                                                                                      5.4s
+ ✔ Container app-app-1    Started       
+curl -fsS http://127.0.0.1:8080
+{"greeting": "They talk about my onetaps", "count": 0, "hostname": "a10e61ab69aa", "storage": "redis"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 1, "hostname": "a10e61ab69aa", "storage": "redis"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 2, "hostname": "a10e61ab69aa", "storage": "redis"}
+docker compose down
+[+] down 3/3
+ ✔ Container app-app-1   Removed                                                                                                       3.4s
+ ✔ Container app-redis-1 Removed                                                                                                       0.3s
+ ✔ Network app_default   Removed 
+docker compose up -d
+[+] up 3/3
+ ✔ Network app_default   Created                                                                                                       0.0s
+ ✔ Container app-redis-1 Healthy                                                                                                       5.4s
+ ✔ Container app-app-1   Started
+curl -fsS http://127.0.0.1:8080
+{"greeting": "They talk about my onetaps", "count": 2, "hostname": "3f4ac441342c", "storage": "redis"}
+docker compose stop redis
+[+] stop 1/1
+ ✔ Container app-redis-1 Stopped   
+curl -fsS -X GET http://127.0.0.1:8080/readyz
+curl: (22) The requested URL returned error: 503
+curl -fsS -X GET http://127.0.0.1:8080/healthz
+{"status": "alive"}
+curl -fsS -X GET http://127.0.0.1:8080/readyz
+curl: (22) The requested URL returned error: 503
+curl -fsS -X POST http://127.0.0.1:8080/increment
+curl: (22) The requested URL returned error: 503
+docker compose start redis
+[+] start 1/1
+ ✔ Container app-redis-1 Started
+curl -fsS -X GET http://127.0.0.1:8080/
+{"greeting": "They talk about my onetaps", "count": 2, "hostname": "3f4ac441342c", "storage": "redis"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 3, "hostname": "3f4ac441342c", "storage": "redis"}
