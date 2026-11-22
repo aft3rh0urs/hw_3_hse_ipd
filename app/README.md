@@ -43,3 +43,46 @@ curl -fsS http://127.0.0.1:8080/readyz
 
 Первый POST в новом хранилище возвращает `count: 1`. GET счётчик не
 увеличивает. В браузере удобнее смотреть GET, для POST используйте curl.
+
+Список команд и их результатов на 6 баллов:
+
+docker build -t cur_app .
+docker compose up -d
+[+] up 3/3
+ ✔ Volume app_counter_volume Created                                                                                                   0.0s
+ ✔ Network app_default       Created                                                                                                   0.0s
+ ✔ Container app-app-1       Started     
+curl -fsS http://127.0.0.1:8080/
+{"greeting": "They talk about my onetaps", "count": 0, "hostname": "29d41c4179cd", "storage": "sqlite"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 1, "hostname": "29d41c4179cd", "storage": "sqlite"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 2, "hostname": "29d41c4179cd", "storage": "sqlite"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 3, "hostname": "29d41c4179cd", "storage": "sqlite"}
+ctrl + C
+docker compose down
+[+] down 2/2
+ ✔ Container app-app-1 Removed                                                                                                         3.3s
+ ✔ Network app_default Removed
+docker compose up -d
+[+] up 2/2
+ ✔ Network app_default Created                                                                                                         0.1s
+ ✔ Container app-app-1 Started  
+curl -fsS http://127.0.0.1:8080/
+{"greeting": "They talk about my onetaps", "count": 3, "hostname": "dd85c0372ca7", "storage": "sqlite"}
+curl -fsS -X POST http://127.0.0.1:8080/increment
+{"greeting": "They talk about my onetaps", "count": 4, "hostname": "dd85c0372ca7", "storage": "sqlite"}
+Теперь в .env(которая создавалась cp .env.example .env)
+Меняю GREETING на WAZZUP
+Меняю APP_PORT на 8888
+docker compose down
+[+] down 2/2
+ ✔ Container app-app-1 Removed                                                                                                         3.3s
+ ✔ Network app_default Removed      
+docker compose up -d
+[+] up 2/2
+ ✔ Network app_default Created                                                                                                         0.0s
+ ✔ Container app-app-1 Started                          
+curl -fsS http://127.0.0.1:8888/
+{"greeting": "Wazzup", "count": 4, "hostname": "f27cfeb1b836", "storage": "sqlite"}
